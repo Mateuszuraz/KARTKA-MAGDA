@@ -305,7 +305,7 @@
   <header class="header">
     <p class="tagline">Urodziny 2026</p>
     <h1>Wszystkiego<br><em>Najlepszego</em></h1>
-    <p class="subname">— Magda —</p>
+    <p class="subname">— Madzia —</p>
   </header>
 
   <!-- Molecule -->
@@ -339,7 +339,7 @@
       masz unikalną perspektywę, żeby to robić <em>świadomie i z głową</em>.<br><br>
       Życzę Ci, żeby ta terapia dała Ci dokładnie to, czego szukasz.
       Mniej napięcia, lepszy sen, więcej przestrzeni dla siebie.<br><br>
-      <strong>Sto lat, Magdo. Zdrowie przede wszystkim</strong> 🌿
+      <strong>Sto lat, Madziu. Zdrowie przede wszystkim</strong> 🌿
     </p>
   </div>
 
@@ -487,7 +487,7 @@ playBtn.addEventListener('click',()=>{
     const top=Math.round(window.screen.height/2 - h/2);
     musicWin=window.open(
       _url,
-      'magda_music',
+      'madzia_music',
       `width=${w},height=${h},left=${left},top=${top},toolbar=no,menubar=no,location=no,status=no`
     );
     musicOpen=true;
@@ -645,6 +645,96 @@ document.addEventListener('click',e=>{
     burst(e.clientX,e.clientY,false);
 });
 
+/* ══ Easter egg: SHAKE → eksplozja liści + cytat ══ */
+const CYTATY = [
+  "Dawka czyni truciznę — Paracelsus, ojciec farmakologii 🌿",
+  "Natura jest najstarszą apteką świata 🍃",
+  "Ciało fizjoterapeuty wie, kiedy powiedzieć 'dość' 😄",
+  "Endokannabinoidowy układ nerwowy pozdrawia 🧠",
+  "Protokół: obserwuj, dostosuj, nie panikuj ✓",
+  "CBD:THC — jak proporcje w dobrej terapii manualnej 💆",
+  "Najlepsza dawka to ta, która działa — nie ta największa 📉",
+  "Homeostaza to nie cel, to tryb domyślny organizmu 🔄",
+  "Lekarz przepisał, Madzia zdecyduje 🌿",
+];
+
+let lastShake = 0;
+let shakeOverlay = null;
+
+function showShakeEgg() {
+  const now = Date.now();
+  if (now - lastShake < 3000) return; // cooldown 3s
+  lastShake = now;
+
+  // Eksplozja liści
+  for (let i = 0; i < 18; i++) {
+    setTimeout(() => burst(Math.random() * CW, Math.random() * CH, Math.random() > 0.5), i * 40);
+  }
+  // Dodaj 12 liści tymczasowo w górę
+  for (let i = 0; i < 12; i++) {
+    const l = new Leaf(false);
+    l.y = CH * 0.5 + (Math.random() - 0.5) * 300;
+    l.x = CW * 0.5 + (Math.random() - 0.5) * 400;
+    l.speedY = 1.5 + Math.random() * 2;
+    l.alpha = 0.5 + Math.random() * 0.4;
+    l.size = 0.5 + Math.random() * 0.6;
+    leaves.push(l);
+    setTimeout(() => leaves.splice(leaves.indexOf(l), 1), 3000);
+  }
+
+  // Cytat popup
+  if (shakeOverlay) shakeOverlay.remove();
+  const cytat = CYTATY[Math.floor(Math.random() * CYTATY.length)];
+  shakeOverlay = document.createElement('div');
+  shakeOverlay.style.cssText = `
+    position:fixed; inset:0; z-index:500;
+    display:flex; align-items:center; justify-content:center;
+    pointer-events:none;
+  `;
+  shakeOverlay.innerHTML = `
+    <div style="
+      background:rgba(0,18,9,0.92);
+      border:1px solid rgba(0,255,127,0.35);
+      border-radius:2px;
+      padding:28px 36px;
+      max-width:340px;
+      text-align:center;
+      backdrop-filter:blur(16px);
+      animation:fadeUp .4s ease both;
+      position:relative;
+    ">
+      <p style="font-family:'Space Mono',monospace;font-size:9px;letter-spacing:4px;color:#00e5c8;margin-bottom:14px;">// mądrość dnia</p>
+      <p style="font-family:'Cormorant Garamond',serif;font-size:19px;font-weight:300;line-height:1.6;color:#f5eed8;">${cytat}</p>
+      <div style="margin-top:16px;height:1px;background:linear-gradient(90deg,transparent,#00ff7f,transparent);"></div>
+      <p style="font-family:'Space Mono',monospace;font-size:9px;color:rgba(0,255,127,0.4);margin-top:12px;letter-spacing:2px;">potrząśnij jeszcze raz po więcej</p>
+    </div>
+  `;
+  document.body.appendChild(shakeOverlay);
+  setTimeout(() => {
+    if (shakeOverlay) {
+      shakeOverlay.style.opacity = '0';
+      shakeOverlay.style.transition = 'opacity .6s';
+      setTimeout(() => { if(shakeOverlay) shakeOverlay.remove(); shakeOverlay=null; }, 600);
+    }
+  }, 3500);
+}
+
+// Shake detection
+let shakeLastX = null, shakeLastY = null, shakeLastZ = null;
+window.addEventListener('devicemotion', e => {
+  const acc = e.accelerationIncludingGravity;
+  if (!acc) return;
+  const { x, y, z } = acc;
+  if (shakeLastX === null) { shakeLastX=x; shakeLastY=y; shakeLastZ=z; return; }
+  const delta = Math.abs(x-shakeLastX) + Math.abs(y-shakeLastY) + Math.abs(z-shakeLastZ);
+  shakeLastX=x; shakeLastY=y; shakeLastZ=z;
+  if (delta > 25) showShakeEgg();
+}, { passive: true });
+
+// Desktop fallback: szybkie podwójne kliknięcie na molekułę
+document.querySelector('.mol-wrap').addEventListener('dblclick', showShakeEgg);
+document.querySelector('.mol-wrap').title = '💡 na telefonie: potrząśnij!';
+
 /* ══ Easter egg: 3× klik w tytuł ══ */
 let tc=0;
 document.querySelector('h1').addEventListener('click',()=>{
@@ -653,7 +743,7 @@ document.querySelector('h1').addEventListener('click',()=>{
     document.querySelector('h1 em').style.textShadow='0 0 100px rgba(0,255,127,1)';
     const m=document.createElement('p');
     m.style.cssText='text-align:center;font-family:"Space Mono",monospace;font-size:11px;color:#00e5c8;letter-spacing:2px;margin-top:12px;';
-    m.textContent='// 🌿 Magda mode: fully activated';
+    m.textContent='// 🌿 Madzia mode: fully activated';
     document.querySelector('.header').appendChild(m);
     for(let i=0;i<12;i++) setTimeout(()=>burst(Math.random()*CW,Math.random()*500,i%2===0),i*70);
   }
@@ -661,4 +751,3 @@ document.querySelector('h1').addEventListener('click',()=>{
 </script>
 </body>
 </html>
-
