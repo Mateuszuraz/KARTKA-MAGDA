@@ -437,6 +437,15 @@
 
 <div class="leaf-counter" id="counter">∿ 0 interakcji</div>
 
+<!-- Shake hint — pojawia się po 3 sekundach na mobile -->
+<div id="shake-hint" style="
+  display:none;
+  position:fixed; bottom:52px; left:50%; transform:translateX(-50%);
+  font-family:'Space Mono',monospace; font-size:10px; letter-spacing:2px;
+  color:rgba(0,255,127,0.5); z-index:20; pointer-events:none;
+  white-space:nowrap; animation:fadeUp .6s ease both;
+">📱 potrząśnij telefonem</div>
+
 <script>
 /* ══ Cursor ══ */
 const cur=document.getElementById('cursor'),ring=document.getElementById('cursorRing');
@@ -719,19 +728,54 @@ function showShakeEgg() {
   }, 3500);
 }
 
-// Shake detection
-let shakeLastX = null, shakeLastY = null, shakeLastZ = null;
-window.addEventListener('devicemotion', e => {
-  const acc = e.accelerationIncludingGravity;
-  if (!acc) return;
-  const { x, y, z } = acc;
-  if (shakeLastX === null) { shakeLastX=x; shakeLastY=y; shakeLastZ=z; return; }
-  const delta = Math.abs(x-shakeLastX) + Math.abs(y-shakeLastY) + Math.abs(z-shakeLastZ);
-  shakeLastX=x; shakeLastY=y; shakeLastZ=z;
-  if (delta > 25) showShakeEgg();
-}, { passive: true });
+// Pokaż hint na mobile po 3 sekundach
+if ('ontouchstart' in window) {
+  setTimeout(() => {
+    const hint = document.getElementById('shake-hint');
+    if (hint) {
+      hint.style.display = 'block';
+      setTimeout(() => {
+        hint.style.transition = 'opacity 1s';
+        hint.style.opacity = '0';
+        setTimeout(() => hint.remove(), 1000);
+      }, 4000);
+    }
+  }, 3000);
+}
 
-// Desktop fallback: szybkie podwójne kliknięcie na molekułę
+// Shake detection — działa na iOS i Android
+let shakeLastX=null, shakeLastY=null, shakeLastZ=null;
+
+function startShakeListener() {
+  window.addEventListener('devicemotion', e => {
+    const acc = e.accelerationIncludingGravity || e.acceleration;
+    if (!acc) return;
+    const x = acc.x||0, y = acc.y||0, z = acc.z||0;
+    if (shakeLastX === null) { shakeLastX=x; shakeLastY=y; shakeLastZ=z; return; }
+    const delta = Math.abs(x-shakeLastX) + Math.abs(y-shakeLastY) + Math.abs(z-shakeLastZ);
+    shakeLastX=x; shakeLastY=y; shakeLastZ=z;
+    if (delta > 20) showShakeEgg();
+  }, { passive: true });
+}
+
+// iOS 13+ wymaga jawnej zgody na DeviceMotion
+if (typeof DeviceMotionEvent !== 'undefined' &&
+    typeof DeviceMotionEvent.requestPermission === 'function') {
+  // iOS — prosimy o zgodę przy pierwszym dotknięciu
+  document.addEventListener('touchend', function askPermission() {
+    DeviceMotionEvent.requestPermission()
+      .then(state => {
+        if (state === 'granted') startShakeListener();
+      })
+      .catch(() => {});
+    document.removeEventListener('touchend', askPermission);
+  }, { once: true });
+} else {
+  // Android i inne — od razu startujemy
+  startShakeListener();
+}
+
+// Desktop fallback: podwójne kliknięcie w molekułę
 document.querySelector('.mol-wrap').addEventListener('dblclick', showShakeEgg);
 document.querySelector('.mol-wrap').title = '💡 na telefonie: potrząśnij!';
 
