@@ -339,7 +339,7 @@
       masz unikalną perspektywę, żeby to robić <em>świadomie i z głową</em>.<br><br>
       Życzę Ci, żeby ta terapia dała Ci dokładnie to, czego szukasz.
       Mniej napięcia, lepszy sen, więcej przestrzeni dla siebie.<br><br>
-      <strong>Sto lat, Madziu. Zdrowie przede wszystkim</strong> 🌿
+      <strong>Sto lat, Magdo. Zdrowie przede wszystkim</strong> 🌿
     </p>
   </div>
 
@@ -425,6 +425,60 @@
       </div>
 
     </div>
+  </div>
+
+  <!-- Pain Clinic card -->
+  <div class="card" style="animation-delay:.55s; margin-bottom:32px;">
+    <p class="card-label" style="color:var(--teal);">// klinika prowadząca terapię</p>
+    <a href="https://painclinic.pl" target="_blank" rel="noopener"
+       style="text-decoration:none; display:block;"
+       id="painclinic-link">
+      <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:16px;">
+        <div>
+          <p style="font-size:22px; font-weight:300; color:var(--cream); margin-bottom:6px;">
+            Pain<em style="font-style:italic; color:var(--teal);">Clinic</em>
+          </p>
+          <p style="font-family:'Space Mono',monospace; font-size:10px; color:rgba(0,229,200,0.55); letter-spacing:1px; margin-bottom:4px;">
+            Sosnowiec · Kraków · PN–ND 9:00–20:00
+          </p>
+          <p style="font-family:'Space Mono',monospace; font-size:10px; color:rgba(0,229,200,0.4); letter-spacing:1px;">
+            +48 605 935 668
+          </p>
+        </div>
+        <div style="
+          width:44px; height:44px; border-radius:50%;
+          border:1px solid rgba(0,229,200,0.4);
+          display:flex; align-items:center; justify-content:center;
+          color:var(--teal); font-size:18px;
+          transition: all .25s;
+          flex-shrink:0;
+        " id="pc-arrow">→</div>
+      </div>
+      <div style="margin-top:16px; height:1px; background:linear-gradient(90deg,transparent,rgba(0,229,200,0.3),transparent);"></div>
+      <p style="margin-top:12px; font-size:15px; color:rgba(245,238,216,0.55); line-height:1.6;">
+        Klinika medycznej marihuany — legalna terapia, indywidualne podejście,
+        wizyta już od <span style="color:var(--cream);">99 zł</span>.
+      </p>
+    </a>
+  </div>
+
+  <!-- Apteka button -->
+  <div style="text-align:center; margin-bottom:32px; animation:fadeUp .9s .6s ease both;">
+    <a href="https://mm420.pl" target="_blank" rel="noopener" style="
+      display:inline-flex; align-items:center; gap:10px;
+      font-family:'Space Mono',monospace; font-size:11px; letter-spacing:3px;
+      text-transform:uppercase; text-decoration:none;
+      color:var(--green2);
+      border:1px solid rgba(0,255,127,0.25);
+      padding:14px 28px; border-radius:2px;
+      background:rgba(0,18,9,0.5);
+      backdrop-filter:blur(12px);
+      transition:all .25s;
+    "
+    onmouseover="this.style.borderColor='rgba(0,255,127,0.6)';this.style.color='#00ff7f';this.style.boxShadow='0 0 20px rgba(0,255,127,0.2)';"
+    onmouseout="this.style.borderColor='rgba(0,255,127,0.25)';this.style.color='var(--green2)';this.style.boxShadow='none';">
+      🌿 menu apteki · mm420.pl
+    </a>
   </div>
 
   <!-- Signature -->
@@ -727,6 +781,14 @@ function showShakeEgg() {
     }
   }, 3500);
 }
+
+/* ══ Pain Clinic link hover ══ */
+document.getElementById('painclinic-link').addEventListener('mouseenter', () => {
+  document.getElementById('pc-arrow').style.cssText += 'background:rgba(0,229,200,0.15);border-color:var(--teal);box-shadow:0 0 16px rgba(0,229,200,0.3);transform:translateX(4px);';
+});
+document.getElementById('painclinic-link').addEventListener('mouseleave', () => {
+  document.getElementById('pc-arrow').style.cssText = 'width:44px;height:44px;border-radius:50%;border:1px solid rgba(0,229,200,0.4);display:flex;align-items:center;justify-content:center;color:var(--teal);font-size:18px;transition:all .25s;flex-shrink:0;';
+});
 
 // Pokaż hint na mobile po 3 sekundach
 if ('ontouchstart' in window) {
