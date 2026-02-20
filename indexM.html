@@ -1,0 +1,663 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Wszystkiego najlepszego, Magda 🌿</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --deep: #030d07;
+    --green: #00ff7f;
+    --green2: #00c96a;
+    --teal: #00e5c8;
+    --gold: #c8a96e;
+    --cream: #f5eed8;
+  }
+
+  * { margin:0; padding:0; box-sizing:border-box; }
+
+  html, body {
+    width:100%; min-height:100%;
+    background: var(--deep);
+    font-family: 'Cormorant Garamond', serif;
+    color: var(--cream);
+    overflow-x: hidden;
+    cursor: none;
+  }
+
+  /* ── Custom cursor ── */
+  .cursor {
+    position:fixed; width:12px; height:12px; border-radius:50%;
+    background:var(--green); pointer-events:none; z-index:9999;
+    transform:translate(-50%,-50%); mix-blend-mode:screen;
+    box-shadow:0 0 16px var(--green);
+  }
+  .cursor-ring {
+    position:fixed; width:36px; height:36px; border-radius:50%;
+    border:1px solid rgba(0,255,127,0.4); pointer-events:none; z-index:9998;
+    transform:translate(-50%,-50%); transition:all .12s ease;
+  }
+  @media (pointer:coarse){ .cursor,.cursor-ring{display:none;} html,body{cursor:auto;} }
+
+  /* ── Video background ── */
+  #video-bg {
+    position:fixed; top:0; left:0; width:100%; height:100%;
+    object-fit:cover; z-index:0; opacity:0.2;
+    filter: saturate(0.5) hue-rotate(90deg) brightness(0.65);
+  }
+
+  /* ── Dark overlay ── */
+  #overlay {
+    position:fixed; top:0; left:0; width:100%; height:100%; z-index:1;
+    background: radial-gradient(ellipse at 50% 55%, rgba(0,28,14,0.5) 0%, rgba(3,13,7,0.9) 100%);
+    pointer-events:none;
+  }
+
+  /* ── Scanlines ── */
+  #scanlines {
+    position:fixed; top:0; left:0; right:0; bottom:0; z-index:2; pointer-events:none;
+    background: repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,0.035) 2px,rgba(0,0,0,0.035) 4px);
+  }
+
+  /* ── Leaf canvas ── */
+  #leaf-canvas {
+    position:fixed; top:0; left:0; width:100%; height:100%;
+    z-index:3; pointer-events:none;
+  }
+
+  /* ── Main content ── */
+  .wrap {
+    position:relative; z-index:10;
+    max-width:700px; margin:0 auto;
+    padding:60px 24px 100px;
+  }
+
+  /* ── Header ── */
+  .header {
+    text-align:center; margin-bottom:52px;
+    animation:fadeUp .9s ease both;
+  }
+  .tagline {
+    font-family:'Space Mono',monospace; font-size:10px;
+    letter-spacing:4px; color:var(--green2); text-transform:uppercase;
+    margin-bottom:22px;
+    display:flex; align-items:center; justify-content:center; gap:12px;
+  }
+  .tagline::before,.tagline::after {
+    content:''; flex:1; max-width:80px; height:1px;
+    background:linear-gradient(90deg,transparent,var(--green2));
+  }
+  .tagline::after{transform:scaleX(-1);}
+
+  h1 {
+    font-size:clamp(52px,12vw,90px); font-weight:300;
+    line-height:.88; letter-spacing:-2px; color:var(--cream);
+  }
+  h1 em {
+    display:block; font-style:italic; color:var(--green);
+    text-shadow:0 0 50px rgba(0,255,127,0.55);
+  }
+  .subname {
+    margin-top:16px; font-family:'Space Mono',monospace;
+    font-size:11px; letter-spacing:4px; color:var(--gold); opacity:.7;
+  }
+
+  /* ── Molecule ── */
+  .mol-wrap {
+    display:flex; justify-content:center; margin:36px 0;
+    animation:fadeUp .9s .15s ease both;
+  }
+  .mol-wrap svg {
+    filter:drop-shadow(0 0 14px rgba(0,255,127,0.45));
+    animation:float 4s ease-in-out infinite;
+  }
+
+  /* ── Cards ── */
+  .card {
+    background:rgba(0,18,9,0.62);
+    border:1px solid rgba(0,255,127,0.14);
+    border-radius:2px; padding:36px 40px;
+    position:relative; overflow:hidden;
+    backdrop-filter:blur(14px);
+    animation:fadeUp .9s .25s ease both;
+    margin-bottom:32px;
+  }
+  .card::after {
+    content:''; position:absolute; top:0; left:0; right:0; height:1px;
+    background:linear-gradient(90deg,transparent,var(--green),transparent);
+  }
+  .card-label {
+    font-family:'Space Mono',monospace; font-size:9px;
+    letter-spacing:4px; color:var(--green2); text-transform:uppercase;
+    margin-bottom:18px;
+  }
+  .message {
+    font-size:clamp(17px,2.8vw,21px); font-weight:300;
+    line-height:1.75; color:rgba(245,238,216,0.9);
+  }
+  .message strong{color:var(--cream);font-weight:400;}
+  .message em{color:var(--green);font-style:italic;}
+
+  /* ── Music card ── */
+  .music-card {
+    background:rgba(0,18,9,0.62);
+    border:1px solid rgba(0,229,200,0.18);
+    border-radius:2px; padding:28px 32px;
+    backdrop-filter:blur(14px);
+    animation:fadeUp .9s .35s ease both;
+    margin-bottom:32px;
+    position:relative; overflow:hidden;
+  }
+  .music-card::after {
+    content:''; position:absolute; top:0; left:0; right:0; height:1px;
+    background:linear-gradient(90deg,transparent,var(--teal),transparent);
+  }
+  .music-label {
+    font-family:'Space Mono',monospace; font-size:9px;
+    letter-spacing:4px; color:var(--teal); text-transform:uppercase;
+    margin-bottom:18px;
+  }
+  .music-inner {
+    display:flex; align-items:center; gap:20px; flex-wrap:wrap;
+  }
+  .play-btn {
+    width:58px; height:58px; flex-shrink:0;
+    border-radius:50%; background:rgba(0,229,200,0.08);
+    border:1.5px solid var(--teal);
+    cursor:pointer;
+    display:flex; align-items:center; justify-content:center;
+    transition:all .25s;
+    position:relative;
+  }
+  .play-btn::before {
+    content:'';
+    position:absolute; inset:-6px; border-radius:50%;
+    border:1px solid rgba(0,229,200,0.15);
+    animation:ring-pulse 2s ease-in-out infinite;
+  }
+  @keyframes ring-pulse{
+    0%,100%{transform:scale(1);opacity:.15;}
+    50%{transform:scale(1.12);opacity:.35;}
+  }
+  .play-btn:hover {
+    background:rgba(0,229,200,0.2);
+    box-shadow:0 0 28px rgba(0,229,200,0.4);
+    transform:scale(1.06);
+  }
+  .play-icon-tri { margin-left:4px; }
+  .pause-bars { display:none; gap:4px; align-items:center; }
+  .pause-bar {
+    width:4px; height:16px; background:var(--teal); border-radius:2px;
+  }
+  .music-info { flex:1; min-width:160px; }
+  .music-title {
+    font-size:19px; font-weight:300; color:var(--cream); margin-bottom:4px;
+  }
+  .music-sub {
+    font-family:'Space Mono',monospace; font-size:10px;
+    color:rgba(0,229,200,0.55); letter-spacing:1px;
+  }
+  /* wave bars */
+  .wave-bars {
+    display:flex; align-items:flex-end; gap:3px; height:28px; margin-top:12px;
+  }
+  .wave-bar {
+    width:3px; background:rgba(0,229,200,0.28); border-radius:2px;
+    height:4px;
+    transition:background .3s;
+  }
+  .wave-bar.playing {
+    background:var(--teal);
+    animation:wave var(--dur) ease-in-out infinite var(--delay) alternate;
+  }
+  @keyframes wave{
+    0%{height:4px;opacity:.5;} 100%{height:var(--max-h);opacity:1;}
+  }
+
+  /* ── Accordion ── */
+  .acc-section { animation:fadeUp .9s .45s ease both; margin-bottom:32px; }
+  .section-label {
+    font-family:'Space Mono',monospace; font-size:9px;
+    letter-spacing:4px; color:var(--green2); text-transform:uppercase;
+    margin-bottom:16px;
+  }
+  .acc-wrap {
+    background:rgba(0,18,9,0.62);
+    border:1px solid rgba(0,255,127,0.14);
+    border-radius:2px; overflow:hidden; backdrop-filter:blur(14px);
+  }
+  .acc-item { border-bottom:1px solid rgba(0,255,127,0.07); }
+  .acc-item:last-child{border-bottom:none;}
+  .acc-head {
+    width:100%; background:none; border:none; cursor:pointer;
+    display:flex; justify-content:space-between; align-items:center;
+    padding:18px 28px; font-family:'Cormorant Garamond',serif;
+    font-size:18px; color:var(--cream); text-align:left; transition:color .3s;
+  }
+  .acc-head:hover{color:var(--green);}
+  .acc-arrow {
+    font-family:'Space Mono',monospace; font-size:11px;
+    color:var(--green); transition:transform .3s; flex-shrink:0;
+  }
+  .acc-item.open .acc-arrow{transform:rotate(90deg);}
+  .acc-body{
+    max-height:0; overflow:hidden; transition:max-height .42s ease;
+    font-size:16px; line-height:1.8; color:rgba(245,238,216,0.72);
+  }
+  .acc-body-inner{padding:4px 28px 24px;}
+  .acc-item.open .acc-body{max-height:420px;}
+  .pill-list{
+    list-style:none; display:flex; flex-wrap:wrap; gap:8px; margin-top:14px;
+  }
+  .pill-list li{
+    font-family:'Space Mono',monospace; font-size:10px; letter-spacing:1px;
+    padding:5px 13px; border:1px solid rgba(0,255,127,0.28);
+    border-radius:100px; color:var(--green2);
+  }
+
+  /* ── Signature ── */
+  .sig{
+    margin-top:64px; text-align:center;
+    animation:fadeUp .9s .6s ease both;
+  }
+  .sig-heart{display:block;font-size:24px;margin-bottom:10px;animation:pulse 2.4s infinite;}
+  .sig-name{font-size:14px;font-style:italic;color:rgba(245,238,216,0.35);letter-spacing:2px;}
+
+  /* ── Counter ── */
+  .leaf-counter{
+    position:fixed; bottom:20px; right:20px;
+    font-family:'Space Mono',monospace; font-size:10px;
+    color:rgba(0,255,127,0.22); letter-spacing:2px; z-index:20;
+    pointer-events:none; transition:color .4s;
+  }
+
+  /* ── Burst ── */
+  .burst{position:fixed;pointer-events:none;z-index:1000;}
+  .burst span{
+    position:absolute; display:block; width:6px; height:6px; border-radius:1px;
+    animation:burstOut .8s ease forwards;
+  }
+
+  /* ── Keyframes ── */
+  @keyframes fadeUp{ from{opacity:0;transform:translateY(24px);} to{opacity:1;transform:translateY(0);} }
+  @keyframes float{ 0%,100%{transform:translateY(0);} 50%{transform:translateY(-10px);} }
+  @keyframes pulse{ 0%,100%{opacity:.45;transform:scale(1);} 50%{opacity:1;transform:scale(1.15);} }
+  @keyframes burstOut{ to{transform:translate(var(--dx),var(--dy)) rotate(var(--rot));opacity:0;} }
+</style>
+</head>
+<body>
+
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+
+<video id="video-bg" autoplay muted loop playsinline>
+  <source src="uhd_30fps.mp4" type="video/mp4">
+</video>
+
+<div id="overlay"></div>
+<div id="scanlines"></div>
+<canvas id="leaf-canvas"></canvas>
+
+<div class="wrap">
+
+  <!-- Header -->
+  <header class="header">
+    <p class="tagline">Urodziny 2026</p>
+    <h1>Wszystkiego<br><em>Najlepszego</em></h1>
+    <p class="subname">— Magda —</p>
+  </header>
+
+  <!-- Molecule -->
+  <div class="mol-wrap">
+    <svg width="110" height="110" viewBox="0 0 110 110" fill="none">
+      <line x1="55" y1="55" x2="55" y2="20" stroke="#00ff7f" stroke-width="1.5" stroke-dasharray="3 3"/>
+      <line x1="55" y1="55" x2="86" y2="73" stroke="#00ff7f" stroke-width="1.5" stroke-dasharray="3 3"/>
+      <line x1="55" y1="55" x2="24" y2="73" stroke="#00ff7f" stroke-width="1.5" stroke-dasharray="3 3"/>
+      <line x1="55" y1="55" x2="86" y2="37" stroke="#00e5c8" stroke-width="1" opacity=".5"/>
+      <line x1="55" y1="55" x2="24" y2="37" stroke="#00e5c8" stroke-width="1" opacity=".5"/>
+      <circle cx="55" cy="55" r="9" fill="#030d07" stroke="#00ff7f" stroke-width="1.5"/>
+      <circle cx="55" cy="20" r="5.5" fill="#030d07" stroke="#00ff7f" stroke-width="1.5"/>
+      <circle cx="86" cy="73" r="5.5" fill="#030d07" stroke="#00ff7f" stroke-width="1.5"/>
+      <circle cx="24" cy="73" r="5.5" fill="#030d07" stroke="#00ff7f" stroke-width="1.5"/>
+      <circle cx="86" cy="37" r="3.5" fill="#030d07" stroke="#00e5c8" stroke-width="1"/>
+      <circle cx="24" cy="37" r="3.5" fill="#030d07" stroke="#00e5c8" stroke-width="1"/>
+      <text x="55" y="58.5" text-anchor="middle" fill="#00ff7f" font-family="Space Mono,monospace" font-size="6.5">C₂₁</text>
+      <text x="55" y="14.5" text-anchor="middle" fill="#00ff7f" font-family="Space Mono,monospace" font-size="5.5">OH</text>
+      <text x="93" y="76" fill="#00ff7f" font-family="Space Mono,monospace" font-size="5.5">O</text>
+      <text x="17" y="76" fill="#00ff7f" font-family="Space Mono,monospace" font-size="5.5">H</text>
+      <circle cx="55" cy="55" r="48" stroke="rgba(0,255,127,0.07)" stroke-width="1" fill="none"/>
+    </svg>
+  </div>
+
+  <!-- Message -->
+  <div class="card">
+    <p class="card-label">// wiadomość urodzinowa</p>
+    <p class="message">
+      Magda — <strong>zaczynasz nowy rozdział</strong>.<br>
+      Jako ktoś, kto zawodowo rozumie ciało lepiej niż większość —
+      masz unikalną perspektywę, żeby to robić <em>świadomie i z głową</em>.<br><br>
+      Życzę Ci, żeby ta terapia dała Ci dokładnie to, czego szukasz.
+      Mniej napięcia, lepszy sen, więcej przestrzeni dla siebie.<br><br>
+      <strong>Sto lat, Magdo. Zdrowie przede wszystkim</strong> 🌿
+    </p>
+  </div>
+
+  <!-- Music player -->
+  <div class="music-card">
+    <p class="music-label">// muzyka na tę chwilę</p>
+    <div class="music-inner">
+      <button class="play-btn" id="playBtn" aria-label="Odtwórz">
+        <svg class="play-icon-tri" id="play-icon" width="20" height="22" viewBox="0 0 20 22" fill="none">
+          <polygon points="4,2 18,11 4,20" fill="#00e5c8"/>
+        </svg>
+        <div class="pause-bars" id="pause-bars">
+          <div class="pause-bar"></div>
+          <div class="pause-bar"></div>
+        </div>
+      </button>
+      <div class="music-info">
+        <p class="music-title">dla Ciebie 🎵</p>
+        <p class="music-sub" id="music-sub">kliknij ▶ · otwiera się obok</p>
+        <div class="wave-bars" id="waveBars"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Guide accordion -->
+  <div class="acc-section">
+    <p class="section-label">// rzeczy, które warto wiedzieć na start</p>
+    <div class="acc-wrap" id="accordion">
+
+      <div class="acc-item">
+        <button class="acc-head">Kiedy i gdzie — pierwsze doświadczenie <span class="acc-arrow">▶</span></button>
+        <div class="acc-body"><div class="acc-body-inner">
+          Wieczór w domu, zero planów na wyjście, znane i bezpieczne miejsce.
+          Nie musisz być sama — bliska osoba obok to zawsze dobry pomysł na start.
+          Telefon odłożony, spokojna muzyka, szklanka wody.
+          <ul class="pill-list">
+            <li>🕐 wieczór</li><li>🏠 bezpieczne miejsce</li>
+            <li>💧 woda pod ręką</li><li>📵 luz czasowy</li>
+          </ul>
+        </div></div>
+      </div>
+
+      <div class="acc-item">
+        <button class="acc-head">Dawkowanie — cierpliwość ponad wszystko <span class="acc-arrow">▶</span></button>
+        <div class="acc-body"><div class="acc-body-inner">
+          Zacznij od minimalnej dawki zaleconej przez lekarza.
+          Efekt przy inhalacji czuć po kilku minutach, przy olejkach/kapsułkach —
+          nawet 45–90 minut. <em>Nie dokładaj, zanim nie poczujesz pełnego działania.</em>
+          To najczęstszy błąd na początku.
+          <ul class="pill-list">
+            <li>📉 mało na start</li><li>⏱ czekaj do 90 min (olej)</li>
+            <li>🔄 obserwuj spokojnie</li><li>🚫 nie dokładaj z niecierpliwości</li>
+          </ul>
+        </div></div>
+      </div>
+
+      <div class="acc-item">
+        <button class="acc-head">Gdy "za dużo" — plan spokoju <span class="acc-arrow">▶</span></button>
+        <div class="acc-body"><div class="acc-body-inner">
+          Połóż się wygodnie i przypomnij sobie: <em>to mija, zawsze mija</em>.
+          Oddech powolny i głęboki. Zimna woda na nadgarstki.
+          Czarna pieprz lub cytryna (wąchanie lub żucie) naprawdę łagodzi niepożądany efekt.
+          Nie dokładaj i nie panikuj — to kwestia czasu.
+          <ul class="pill-list">
+            <li>🧘 wolny oddech</li><li>🍋 cytryna / czarny pieprz</li>
+            <li>💧 woda i chłód</li><li>⏳ to zawsze mija</li>
+          </ul>
+        </div></div>
+      </div>
+
+      <div class="acc-item">
+        <button class="acc-head">Bezpieczeństwo — twarde zasady <span class="acc-arrow">▶</span></button>
+        <div class="acc-body"><div class="acc-body-inner">
+          Żadne z tych zasad nie są nudnym moralizowaniem — są po prostu logiczne.
+          Po przyjęciu nie prowadzisz samochodu przez co najmniej kilka godzin.
+          Nie mieszasz z alkoholem, szczególnie na początku.
+          Wszystko ściśle według zalecenia lekarza prowadzącego.
+          <ul class="pill-list">
+            <li>🚗 nie prowadzić</li><li>🍷 nie z alkoholem</li>
+            <li>💊 nie mieszać z lekami bez konsultacji</li><li>📋 według Rx</li>
+          </ul>
+        </div></div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Signature -->
+  <div class="sig">
+    <span class="sig-heart">🌿</span>
+    <p class="sig-name">z miłością — Marta &amp; Mateusz</p>
+  </div>
+
+</div><!-- /wrap -->
+
+<div class="leaf-counter" id="counter">∿ 0 interakcji</div>
+
+<script>
+/* ══ Cursor ══ */
+const cur=document.getElementById('cursor'),ring=document.getElementById('cursorRing');
+let mx=window.innerWidth/2,my=window.innerHeight/2,rx=mx,ry=my;
+document.addEventListener('mousemove',e=>{
+  mx=e.clientX; my=e.clientY;
+  cur.style.left=mx+'px'; cur.style.top=my+'px';
+});
+(function aR(){rx+=(mx-rx)*.12;ry+=(my-ry)*.12;
+  ring.style.left=rx+'px';ring.style.top=ry+'px';requestAnimationFrame(aR);})();
+
+/* ══ Video: iOS tap to play ══ */
+document.addEventListener('touchstart',()=>{
+  const v=document.getElementById('video-bg');
+  if(v.paused) v.play().catch(()=>{});
+},{once:true,passive:true});
+
+/* ══ Wave bars ══ */
+const waveEl=document.getElementById('waveBars');
+const barH=[6,12,20,16,26,18,10,22,14,8,24,16,6,18,12];
+barH.forEach((h,i)=>{
+  const b=document.createElement('div');
+  b.className='wave-bar';
+  b.style.setProperty('--max-h',h+'px');
+  b.style.setProperty('--dur',(0.35+Math.random()*0.45)+'s');
+  b.style.setProperty('--delay',(i*0.055)+'s');
+  waveEl.appendChild(b);
+});
+
+/* ══ Music — hidden YouTube link ══ */
+// The URL is obfuscated so it's not readable in source on casual inspection
+const _parts=['https://www.you','tube.com/watch?v=','WeYsTmIzjkw'];
+const _url=_parts.join('');
+
+let musicOpen=false;
+let musicWin=null;
+const playBtn=document.getElementById('playBtn');
+const playIco=document.getElementById('play-icon');
+const pauseBars=document.getElementById('pause-bars');
+const musicSub=document.getElementById('music-sub');
+const waveBars=document.querySelectorAll('.wave-bar');
+
+playBtn.addEventListener('click',()=>{
+  if(!musicOpen || !musicWin || musicWin.closed){
+    // Open in small window that looks like a player, not a full tab
+    const w=380, h=200;
+    const left=Math.round(window.screen.width/2 - w/2);
+    const top=Math.round(window.screen.height/2 - h/2);
+    musicWin=window.open(
+      _url,
+      'magda_music',
+      `width=${w},height=${h},left=${left},top=${top},toolbar=no,menubar=no,location=no,status=no`
+    );
+    musicOpen=true;
+    // Switch to "playing" state visually
+    playIco.style.display='none';
+    pauseBars.style.display='flex';
+    waveBars.forEach(b=>b.classList.add('playing'));
+    musicSub.textContent='♪ gra dla Ciebie...';
+    updateCounter();
+    burst(playBtn.getBoundingClientRect().left+29,playBtn.getBoundingClientRect().top+29,true);
+    // Poll if window was closed
+    const poll=setInterval(()=>{
+      if(!musicWin||musicWin.closed){
+        clearInterval(poll);
+        musicOpen=false;
+        playIco.style.display='';
+        pauseBars.style.display='none';
+        waveBars.forEach(b=>b.classList.remove('playing'));
+        musicSub.textContent='kliknij ▶ · otwiera się obok';
+      }
+    },800);
+  } else {
+    // Close the window (=pause)
+    musicWin.close();
+    musicOpen=false;
+    playIco.style.display='';
+    pauseBars.style.display='none';
+    waveBars.forEach(b=>b.classList.remove('playing'));
+    musicSub.textContent='kliknij ▶ · otwiera się obok';
+    updateCounter();
+  }
+});
+
+/* ══ Leaf canvas ══ */
+const lc=document.getElementById('leaf-canvas');
+const lctx=lc.getContext('2d');
+let CW,CH;
+function resizeLC(){CW=lc.width=window.innerWidth;CH=lc.height=window.innerHeight;}
+window.addEventListener('resize',resizeLC); resizeLC();
+
+function drawLeaf(ctx,x,y,size,angle,alpha){
+  ctx.save();
+  ctx.globalAlpha=alpha;
+  ctx.translate(x,y);
+  ctx.rotate(angle);
+  ctx.scale(size,size);
+
+  function finger(rot,len,w){
+    ctx.save(); ctx.rotate(rot);
+    ctx.beginPath();
+    ctx.moveTo(0,0);
+    ctx.bezierCurveTo(w,-len*.38, w,-len*.78, 0,-len);
+    ctx.bezierCurveTo(-w,-len*.78, -w,-len*.38, 0,0);
+    ctx.closePath();
+    ctx.fill(); ctx.stroke();
+    ctx.restore();
+  }
+
+  ctx.strokeStyle=`rgba(0,200,100,${Math.min(alpha*1.8,0.65)})`;
+  ctx.fillStyle=`rgba(0,35,18,${alpha*.55})`;
+  ctx.lineWidth=0.7/size;
+
+  // 7 fingers
+  finger(-Math.PI/2,    30, 5.5);  // top
+  finger(-Math.PI/2-.52, 24, 4.5); // upper-left
+  finger(-Math.PI/2+.52, 24, 4.5); // upper-right
+  finger(-Math.PI/2-1.0, 18, 3.5); // mid-left
+  finger(-Math.PI/2+1.0, 18, 3.5); // mid-right
+  finger(-Math.PI/2-1.48,12, 2.5); // low-left
+  finger(-Math.PI/2+1.48,12, 2.5); // low-right
+
+  // stem
+  ctx.beginPath(); ctx.moveTo(0,0); ctx.lineTo(0,16);
+  ctx.strokeStyle=`rgba(0,180,90,${alpha*.7})`;
+  ctx.lineWidth=1.1/size; ctx.stroke();
+
+  ctx.restore();
+}
+
+class Leaf {
+  constructor(scatter){
+    this.x=Math.random()*CW;
+    this.y=scatter ? Math.random()*CH : CH+30+Math.random()*CH;
+    this.size=0.26+Math.random()*0.54;
+    this.angle=Math.random()*Math.PI*2;
+    this.rotSpd=(Math.random()-.5)*.008;
+    this.vy=0.18+Math.random()*0.44;
+    this.vx=(Math.random()-.5)*.22;
+    this.wob=Math.random()*Math.PI*2;
+    this.wobSpd=.007+Math.random()*.013;
+    this.alpha=0.07+Math.random()*.22;
+  }
+  update(){
+    this.y-=this.vy;
+    this.wob+=this.wobSpd;
+    this.x+=this.vx+Math.sin(this.wob)*.32;
+    this.angle+=this.rotSpd;
+    if(this.y<-70){
+      this.x=Math.random()*CW;
+      this.y=CH+30;
+      this.alpha=0.07+Math.random()*.22;
+    }
+  }
+  draw(){ drawLeaf(lctx,this.x,this.y,this.size,this.angle,this.alpha); }
+}
+
+const leaves=Array.from({length:34},(_,i)=>new Leaf(i<22));
+(function ll(){
+  lctx.clearRect(0,0,CW,CH);
+  leaves.forEach(l=>{l.update();l.draw();});
+  requestAnimationFrame(ll);
+})();
+
+/* ══ Accordion ══ */
+let interCount=0;
+const cntEl=document.getElementById('counter');
+function updateCounter(){
+  interCount++;
+  cntEl.textContent=`∿ ${interCount} interakcji`;
+  cntEl.style.color=interCount>5?'rgba(0,255,127,0.48)':'rgba(0,255,127,0.22)';
+}
+
+document.querySelectorAll('.acc-head').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    const item=btn.parentElement;
+    const wasOpen=item.classList.contains('open');
+    document.querySelectorAll('.acc-item').forEach(i=>i.classList.remove('open'));
+    if(!wasOpen) item.classList.add('open');
+    updateCounter();
+    const r=btn.getBoundingClientRect();
+    burst(r.left+r.width/2, r.top+r.height/2, false);
+  });
+});
+
+/* ══ Burst ══ */
+const COLS=['#00ff7f','#00e5c8','#c8a96e','#f5eed8','#00ff7f'];
+function burst(x,y,teal){
+  const d=document.createElement('div');
+  d.className='burst'; d.style.left=x+'px'; d.style.top=y+'px';
+  for(let i=0;i<14;i++){
+    const s=document.createElement('span');
+    const a=Math.random()*360, dist=26+Math.random()*52;
+    s.style.setProperty('--dx',Math.cos(a*Math.PI/180)*dist+'px');
+    s.style.setProperty('--dy',Math.sin(a*Math.PI/180)*dist+'px');
+    s.style.setProperty('--rot',Math.random()*360+'deg');
+    s.style.background=teal?(Math.random()>.5?'#00e5c8':'#00ff7f'):COLS[Math.floor(Math.random()*COLS.length)];
+    d.appendChild(s);
+  }
+  document.body.appendChild(d);
+  setTimeout(()=>d.remove(),900);
+}
+
+document.addEventListener('click',e=>{
+  if(!e.target.closest('.acc-head')&&!e.target.closest('#playBtn'))
+    burst(e.clientX,e.clientY,false);
+});
+
+/* ══ Easter egg: 3× klik w tytuł ══ */
+let tc=0;
+document.querySelector('h1').addEventListener('click',()=>{
+  tc++;
+  if(tc===3){
+    document.querySelector('h1 em').style.textShadow='0 0 100px rgba(0,255,127,1)';
+    const m=document.createElement('p');
+    m.style.cssText='text-align:center;font-family:"Space Mono",monospace;font-size:11px;color:#00e5c8;letter-spacing:2px;margin-top:12px;';
+    m.textContent='// 🌿 Magda mode: fully activated';
+    document.querySelector('.header').appendChild(m);
+    for(let i=0;i<12;i++) setTimeout(()=>burst(Math.random()*CW,Math.random()*500,i%2===0),i*70);
+  }
+});
+</script>
+</body>
+</html>
